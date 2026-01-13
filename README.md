@@ -8,9 +8,7 @@ The system covers the full medical cycle: patient registration, appointment sche
 
 ## 📸 UI Preview
 
-> *(Add screenshots here)*
 
-```md
 ![Dashboard](ClinicMs_Image_1.jpg)
 ![Appointments](ClinicMS_Image_2.jpg)
 ![Doctor Profile](ClinicMs_Image_3.jpg)
