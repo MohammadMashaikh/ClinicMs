@@ -2,6 +2,7 @@ FROM php:8.2-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
+    nginx \
     git \
     curl \
     unzip \
@@ -11,7 +12,6 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libpng-dev \
     libfreetype6-dev \
-    libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
         pdo \
@@ -25,16 +25,16 @@ RUN apt-get update && apt-get install -y \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
-
-# Copy app files
 COPY . .
 
-# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Laravel optimizations
-RUN php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear
+# Nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-CMD ["php-fpm"]
+# Permissions
+RUN chown -R www-data:www-data storage bootstrap/cache
+
+EXPOSE 10000
+
+CMD ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]
